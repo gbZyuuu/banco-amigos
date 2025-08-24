@@ -9,7 +9,11 @@ function App() {
   const [error, setError] = useState('')
   
   // Inicializa o PocketBase
-  const pb = new PocketBase('http://pocketbase:8090');
+  // Substitua esta linha:
+// const pb = new PocketBase('http://pocketbase:8090');
+
+// Por esta linha (com seu URL do PocketBase hospedado):
+const pb = new PocketBase('https://SEU-POCKETBASE-HOSPEDADO.com');
   
   // Configuração de juros
   const INTEREST_RATE = 0.018; // 1.8% ao mês
