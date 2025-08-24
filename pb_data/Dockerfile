@@ -1,5 +1,41 @@
-FROM pocketbase/pocketbase:latest
+# STAGE 1: Build da aplicação
+FROM node:18.17.1-alpine AS build
 
-COPY pb_data /pb_data
+# Cria um usuário não-root para segurança
+RUN addgroup -g 1001 -S nodeuser && \
+    adduser -u 1001 -S nodeuser -G nodeuser
 
-CMD ["serve", "--http", "0.0.0.0:8080"]
+# Define o diretório de trabalho
+WORKDIR /app
+
+# Copia apenas os arquivos necessários para instalar dependências
+COPY package.json vite.config.js ./
+COPY src ./src
+COPY index.html ./
+
+# Altera as permissões para o usuário não-root
+RUN chown -R 1001:0 /app
+
+# Muda para o usuário não-root
+USER 1001
+
+# Instala as dependências
+RUN npm ci --omit=dev
+
+# Constrói a aplicação
+RUN npm run build
+
+# STAGE 2: Serviço final
+FROM nginx:1.25.2-alpine
+
+# Copia os arquivos de build do estágio anterior
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Configuração do NGINX para SPA
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expõe a porta 80
+EXPOSE 80
+
+# Inicia o NGINX
+CMD ["nginx", "-g", "daemon off;"]
