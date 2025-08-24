@@ -7,6 +7,8 @@ services:
       - "80:80"
     depends_on:
       - pocketbase
+    networks:
+      - banco-network
 
   pocketbase:
     image: pocketbase/pocketbase:latest
@@ -16,3 +18,9 @@ services:
     ports:
       - "8090:8090"
     command: serve --http=0.0.0.0:8090
+    networks:
+      - banco-network
+
+networks:
+  banco-network:
+    driver: bridge
