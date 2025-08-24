@@ -8,8 +8,14 @@ RUN addgroup -g 1001 -S nodeuser && \
 # Define o diretório de trabalho
 WORKDIR /app
 
-# Copia apenas os arquivos necessários para instalar dependências
-COPY package.json vite.config.js ./
+# Primeiro copia apenas o package.json
+COPY package.json ./
+
+# Instala as dependências para gerar o package-lock.json
+RUN npm install
+
+# Copia o resto dos arquivos necessários
+COPY vite.config.js ./
 COPY src ./src
 COPY index.html ./
 
@@ -18,9 +24,6 @@ RUN chown -R 1001:0 /app
 
 # Muda para o usuário não-root
 USER 1001
-
-# Instala as dependências
-RUN npm ci --omit=dev
 
 # Constrói a aplicação
 RUN npm run build
