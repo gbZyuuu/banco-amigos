@@ -14,7 +14,7 @@ function App() {
 
 // Por esta linha (com seu URL do PocketBase hospedado):
 // Use este URL TEMPORÁRIO para testes (substitua depois)
-const pb = new PocketBase('http://127.0.0.1:8090');
+const pb = new PocketBase('banco-amigos-production.up.railway.app');
   
   // Configuração de juros
   const INTEREST_RATE = 0.018; // 1.8% ao mês
